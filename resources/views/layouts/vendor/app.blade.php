@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ Session::get('direction') }}">
+
+<head>
+    
+  <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-M2JPK95X');</script>
+<!-- End Google Tag Manager -->  
+    
+    
+    <meta charset="utf-8">
+    <meta name="_token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <meta name="robots" content="nofollow, noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>@yield('title')</title>
+    <link rel="shortcut icon" href="{{ getStorageImages(path: getWebConfig(name: 'company_fav_icon'), type: 'backend-logo') }}">
+
+    @include("layouts.vendor.partials._style-partials")
+
+    {!! ToastMagic::styles() !!}
+
+    @stack('css_or_js')
+</head>
+
+<body class="footer-offset">
+    
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M2JPK95X"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    
+    <div class="row">
+        <div class="col-12 position-fixed z-9999 mt-10rem">
+            <div id="loading" class="d--none">
+                <div id="loader"></div>
+            </div>
+        </div>
+    </div>
+    @include("layouts.vendor.partials._header")
+    @include("layouts.vendor.partials._side-bar")
+
+    <main id="content" role="main" class="main pointer-event">
+        @yield("content")
+        @include("layouts.vendor.partials._footer")
+    </main>
+
+    @include("layouts.vendor.partials._modals")
+    @include("layouts.vendor.partials._toggle-modal")
+    @include("layouts.vendor.partials._sign-out-modal")
+    @include("layouts.vendor.partials._alert-message")
+
+    @include("layouts.vendor.partials._translator-for-js")
+    @include("layouts.vendor.partials._translated-message-container")
+    @include("layouts.vendor.partials._script-partials")
+
+    @stack("script")
+    @stack("script_2")
+</body>
+
+</html>
