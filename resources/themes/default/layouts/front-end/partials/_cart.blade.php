@@ -3,18 +3,34 @@
 
 <div class="navbar-tool dropdown me-2 {{Session::get('direction') === "rtl" ? 'mr-md-3' : 'ml-md-3'}}">
     @if($web_config['guest_checkout_status'] || auth('customer')->check())
-        <a class="navbar-tool-icon-box bg-secondary dropdown-toggle" href="{{route('shop-cart') }}">
-            <span class="navbar-tool-label">
-                {{ $cart->count() }}
-            </span>
-            <i class="navbar-tool-icon czi-cart"></i>
-        </a>
-        <a class="navbar-tool-text ms-2"
-           href="{{route('shop-cart') }}"><small>{{ translate('my_cart') }}</small>
-            <span class="cart-total-price font-bold fs-14">
-                {{ webCurrencyConverter(amount: \App\Utils\CartManager::getCartListTotalAppliedDiscount($cart)) }}
-            </span>
-        </a>
+        {{-- Conditional redirect: to checkout if cart has items, otherwise to cart page --}}
+        @if($cart->count() > 0)
+            <a class="navbar-tool-icon-box bg-secondary dropdown-toggle" href="{{route('checkout-details') }}">
+                <span class="navbar-tool-label">
+                    {{ $cart->count() }}
+                </span>
+                <i class="navbar-tool-icon czi-cart"></i>
+            </a>
+            <a class="navbar-tool-text ms-2"
+               href="{{route('checkout-details') }}"><small>{{ translate('my_cart') }}</small>
+                <span class="cart-total-price font-bold fs-14">
+                    {{ webCurrencyConverter(amount: \App\Utils\CartManager::getCartListTotalAppliedDiscount($cart)) }}
+                </span>
+            </a>
+        @else
+            <a class="navbar-tool-icon-box bg-secondary dropdown-toggle" href="{{route('shop-cart') }}">
+                <span class="navbar-tool-label">
+                    {{ $cart->count() }}
+                </span>
+                <i class="navbar-tool-icon czi-cart"></i>
+            </a>
+            <a class="navbar-tool-text ms-2"
+               href="{{route('shop-cart') }}"><small>{{ translate('my_cart') }}</small>
+                <span class="cart-total-price font-bold fs-14">
+                    {{ webCurrencyConverter(amount: \App\Utils\CartManager::getCartListTotalAppliedDiscount($cart)) }}
+                </span>
+            </a>
+        @endif
     @else
         <a class="navbar-tool-icon-box bg-secondary dropdown-toggle" href="{{ route('customer.auth.login') }}">
             <span class="navbar-tool-label">
