@@ -3564,4 +3564,5 @@ return [
 	"name_field_is_required" => "Name field is required",
 	"The unit price must be greater than 0." => "The unit price must be greater than 0.",
 	"please_ensure_the_deliveryman_has" => "Please ensure the deliveryman has",
+	"category'" => "Category ",
 ];
