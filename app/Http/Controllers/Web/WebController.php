@@ -532,8 +532,30 @@ class WebController extends Controller
         return back();
     }
 
-    public function getCashOnDeliveryCheckoutComplete(Request $request): View|RedirectResponse|JsonResponse
+public function getCashOnDeliveryCheckoutComplete(Request $request): View|RedirectResponse|JsonResponse
     {
+        // Auto-set shipping address from customer profile if not already set
+        if (!session('address_id') || !session('billing_address_id')) {
+            $customer = auth('customer')->user();
+            if ($customer) {
+                // Create shipping address from customer profile
+                $shippingAddress = ShippingAddress::create([
+                    'customer_id' => $customer->id,
+                    'contact_person_name' => $customer->f_name . ' ' . $customer->l_name,
+                    'email' => $customer->email,
+                    'phone' => $customer->phone,
+                    'address' => $customer->address ?? 'Default Address',
+                    'city' => $customer->city ?? '',
+                    'zip' => $customer->zip ?? '',
+                    'country' => $customer->country ?? 'Bangladesh',
+                    'is_guest' => 0,
+                ]);
+                
+                session()->put('address_id', $shippingAddress->id);
+                session()->put('billing_address_id', $shippingAddress->id);
+            }
+        }
+
         if ($request['payment_method'] != 'cash_on_delivery') {
             if ($request->ajax()) {
                 return response()->json([

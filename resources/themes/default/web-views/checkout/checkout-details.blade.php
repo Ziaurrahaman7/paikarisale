@@ -279,38 +279,57 @@
                 </div>
             </div>
 
-            {{-- Shipping Method Card (only for order_wise + inhouse_shipping) --}}
-            @if($shippingMethod == 'inhouse_shipping' && $shippingType == 'order_wise' && count($shippings) > 0)
+{{-- Fixed Delivery Charge --}}
+@php($fixedDeliveryCharge = 250)
             <div class="checkout-card card">
                 <div class="card-header">
                     <h5>
                         <span class="step-badge">2</span>
-                        {{ translate('shipping_method') }}
+                        {{ translate('delivery_info') }}
                     </h5>
                 </div>
                 <div class="card-body">
-                    @foreach($shippings as $shipping)
-                        <div class="shipping-option {{ isset($chosenShipping) && $chosenShipping->shipping_method_id == $shipping['id'] ? 'selected' : '' }}"
-                             onclick="selectShippingMethod({{ $shipping['id'] }}, this)">
+                    <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                        <div class="d-flex align-items-center">
+                            <i class="tio-delivery-truck text-primary mr-2 fs-20"></i>
                             <div>
-                                <div class="shipping-title">
-                                    <i class="tio-delivery-truck mr-1"></i> {{ $shipping['title'] }}
-                                </div>
-                                <div class="shipping-duration">
-                                    <i class="tio-time mr-1"></i> {{ $shipping['duration'] }}
-                                </div>
-                            </div>
-                            <div class="shipping-cost">
-                                {{ webCurrencyConverter(amount: $shipping['cost']) }}
+                                <div class="font-weight-bold">{{ translate('home_delivery') }}</div>
+                                <small class="text-muted">{{ translate('standard_delivery_time') }}</small>
                             </div>
                         </div>
-                    @endforeach
-                    <input type="hidden" id="selected_shipping_method_id"
-                           value="{{ isset($chosenShipping) ? $chosenShipping->shipping_method_id : '' }}">
-                    <span id="route-customer-set-shipping-method" data-url="{{ url('/customer/set-shipping-method') }}"></span>
+                        <div class="font-weight-bold text-primary fs-18">
+                            {{ webCurrencyConverter(amount: $fixedDeliveryCharge) }}
+                        </div>
+                    </div>
                 </div>
             </div>
-            @endif
+
+            {{-- Payment Method Section --}}
+            <div class="checkout-card card">
+                <div class="card-header">
+                    <h5>
+                        <span class="step-badge">3</span>
+                        {{ translate('payment_method') }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="payment-method-options">
+                        <div class="form-check shipping-option selected" onclick="selectPaymentMethod('cash_on_delivery')">
+                            <div class="d-flex align-items-center gap-3 w-100">
+                                <input type="radio" name="payment_method" id="cod" value="cash_on_delivery" checked>
+                                <label for="cod" class="d-flex align-items-center gap-2 w-100 cursor-pointer">
+                                    <i class="tio-money text-success fs-20"></i>
+                                    <div class="flex-grow-1">
+                                        <div class="font-weight-bold">{{ translate('cash_on_delivery') }}</div>
+                                        <small class="text-muted">{{ translate('pay_with_cash_at_delivery') }}</small>
+                                    </div>
+                                    <i class="tio-checkmark-circle text-success fs-20 selected-check"></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {{-- Navigation Buttons --}}
             <div class="row mt-2">
@@ -321,13 +340,13 @@
                         <span class="d-inline d-sm-none">{{ translate('back') }}</span>
                     </a>
                 </div>
-                <div class="col-6">
+<div class="col-6">
                     @if(auth('customer')->check())
-                        <a class="btn btn--primary btn-block" href="{{ route('checkout-shipping') }}">
+                        <button type="button" class="btn btn--primary btn-block" id="proceed_to_checkout_btn">
                             <span class="d-none d-sm-inline">{{ translate('proceed_to_Checkout') }}</span>
                             <span class="d-inline d-sm-none">{{ translate('next') }}</span>
                             <i class="czi-arrow-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }} ml-1"></i>
-                        </a>
+                        </button>
                     @endif
                 </div>
             </div>
@@ -424,5 +443,26 @@ $('#sign-up-form').submit(function (e) {
         }
     });
 });
+
+// Proceed to Checkout - Go to Step 2 (Shipping Form)
+$('#proceed_to_checkout_btn').click(function (e) {
+    e.preventDefault();
+    
+    var btn = $(this);
+    btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> {{ translate("processing") }}...');
+    
+    // Get selected payment method
+    var paymentMethod = $('input[name="payment_method"]:checked').val();
+    
+    // Go to Step 2 (Shipping Form) with Cash on Delivery pre-selected
+    window.location.href = '{{ route("checkout-shipping") }}?payment_method=' + paymentMethod;
+});
+
+// Payment Method Selection
+function selectPaymentMethod(method) {
+    $('.payment-method-options .shipping-option').removeClass('selected');
+    $('.payment-method-options input[value="' + method + '"]').closest('.shipping-option').addClass('selected');
+    $('.payment-method-options input[value="' + method + '"]').prop('checked', true);
+}
 </script>
 @endpush

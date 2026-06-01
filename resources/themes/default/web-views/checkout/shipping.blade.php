@@ -77,6 +77,8 @@
                             @php($chosenShipping = ['shipping_method_id' => 0])
                         @endif
                         
+{{-- START: SHIPPING METHOD SECTION (HIDDEN - Using fixed delivery charge) --}}
+                        {{-- 
                         <div class="px-3 px-md-0 mb-4">
                             <div class="card">
                                 <div class="card-header">
@@ -104,6 +106,8 @@
                                 </div>
                             </div>
                         </div>
+                        --}}
+                        {{-- END: SHIPPING METHOD SECTION --}}
                     @endif
                 @endif
 
