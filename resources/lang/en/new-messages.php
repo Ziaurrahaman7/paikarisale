@@ -3565,4 +3565,6 @@ return [
 	"The unit price must be greater than 0." => "The unit price must be greater than 0.",
 	"please_ensure_the_deliveryman_has" => "Please ensure the deliveryman has",
 	"category'" => "Category ",
+	"load_more_categories" => "Load more categories",
+	"load_more" => "Load more",
 ];
